@@ -34,6 +34,10 @@ export const config = {
   adminToken: required('ADMIN_TOKEN'),
   groqApiKey: process.env.GROQ_API_KEY?.trim() || null,
   groqBaseUrl: optional('GROQ_BASE_URL', 'https://api.groq.com/openai/v1'),
+  openrouterApiKey: process.env.OPENROUTER_API_KEY?.trim() || null,
+  openrouterBaseUrl: optional('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+  openrouterSiteUrl: process.env.OPENROUTER_SITE_URL?.trim() || null,
+  openrouterSiteName: process.env.OPENROUTER_SITE_NAME?.trim() || null,
   providerChain: optional('PROVIDER_CHAIN', 'groq,mock')
     .split(',')
     .map((s) => s.trim())

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Test | LLM Gateway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --danger: #ef4444;
+      --success: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --user-msg: rgba(139, 92, 246, 0.2);
+      --bot-msg: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Glassmorphism Utilities */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* Layout */
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .main-content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      padding: 24px;
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    option {
+      background: #1e1b4b;
+      color: var(--text);
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .messages-container {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--user-msg);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: var(--bot-msg);
+      border: 1px solid var(--glass-border);
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message.system-error {
+      align-self: center;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-area {
+      padding: 24px 40px;
+      border-top: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+      padding: 16px 20px;
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 16px 32px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    
+    button:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    .clear-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Typist animation for loading */
+    .typing {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: blink 1.4s infinite both;
+      margin: 0 2px;
+    }
+    .typing:nth-child(2) { animation-delay: 0.2s; }
+    .typing:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      20% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.2; transform: scale(0.8); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+    .status-dot.online {
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+    
+    .gateway-stats {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1 style="font-size: 24px; font-weight: 700;">Chat Test UI</h1>
+      <p style="color: var(--text-muted); font-size: 13px;">Test your Gateway API directly</p>
+    </div>
+    <div class="status-indicator">
+      <div class="status-dot" id="api-status"></div>
+      <span id="api-status-text">Checking Gateway...</span>
+    </div>
+  </header>
+
+  <div class="main-content">
+    
+    <!-- Settings Sidebar -->
+    <div class="sidebar">
+      <div class="input-group">
+        <label for="api-key">Client API Key (gw_live_...)</label>
+        <input type="password" id="api-key" placeholder="Enter your key here">
+      </div>
+      
+      <div class="input-group">
+        <label for="model-select">Target Model</label>
+        <select id="model-select">
+          <option value="" disabled selected>Loading models...</option>
+        </select>
+      </div>
+      
+      <div class="input-group">
+        <label for="max-tokens">Max Tokens</label>
+        <input type="number" id="max-tokens" value="512">
+      </div>
+      
+      <div class="input-group">
+        <label for="system-prompt">System Prompt</label>
+        <input type="text" id="system-prompt" placeholder="You are a helpful assistant.">
+      </div>
+
+      <div style="flex: 1;"></div>
+      
+      <button class="clear-btn" onclick="clearChat()">Clear Chat History</button>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area">
+      <div class="messages-container" id="chat-container">
+        <!-- Messages will appear here -->
+        <div class="message assistant" style="opacity: 0.7;">
+          <div class="message-meta">Assistant</div>
+          Hello! Please provide an API key and select a model to start testing.
+        </div>
+      </div>
+      
+      <div class="input-area">
+        <form class="chat-form" id="chat-form">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." autocomplete="off">
+          <button type="submit" id="send-btn">Send</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let conversationHistory = [];
+    
+    const elements = {
+      apiKey: document.getElementById('api-key'),
+      modelSelect: document.getElementById('model-select'),
+      maxTokens: document.getElementById('max-tokens'),
+      systemPrompt: document.getElementById('system-prompt'),
+      chatContainer: document.getElementById('chat-container'),
+      chatForm: document.getElementById('chat-form'),
+      chatInput: document.getElementById('chat-input'),
+      sendBtn: document.getElementById('send-btn'),
+      apiStatus: document.getElementById('api-status'),
+      apiStatusText: document.getElementById('api-status-text')
+    };
+
+    // Load saved settings
+    if (localStorage.getItem('TEST_API_KEY')) elements.apiKey.value = localStorage.getItem('TEST_API_KEY');
+    if (localStorage.getItem('TEST_SYSTEM_PROMPT')) elements.systemPrompt.value = localStorage.getItem('TEST_SYSTEM_PROMPT');
+    if (localStorage.getItem('TEST_MAX_TOKENS')) elements.maxTokens.value = localStorage.getItem('TEST_MAX_TOKENS');
+
+    // Save settings on change
+    elements.apiKey.addEventListener('change', () => localStorage.setItem('TEST_API_KEY', elements.apiKey.value));
+    elements.systemPrompt.addEventListener('change', () => localStorage.setItem('TEST_SYSTEM_PROMPT', elements.systemPrompt.value));
+    elements.maxTokens.addEventListener('change', () => localStorage.setItem('TEST_MAX_TOKENS', elements.maxTokens.value));
+
+    // Fetch Health / Models
+    async function initGateway() {
+      try {
+        const res = await fetch('/health');
+        if (res.ok) {
+          const data = await res.json();
+          elements.apiStatus.classList.add('online');
+          elements.apiStatusText.textContent = 'Gateway Online';
+          
+          elements.modelSelect.innerHTML = '';
+          data.models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            elements.modelSelect.appendChild(opt);
+          });
+          
+          if (localStorage.getItem('TEST_MODEL') && data.models.includes(localStorage.getItem('TEST_MODEL'))) {
+            elements.modelSelect.value = localStorage.getItem('TEST_MODEL');
+          }
+        }
+      } catch (err) {
+        elements.apiStatusText.textContent = 'Gateway Offline';
+        console.error('Failed to connect to gateway', err);
+      }
+    }
+
+    elements.modelSelect.addEventListener('change', () => localStorage.setItem('TEST_MODEL', elements.modelSelect.value));
+
+    function appendMessage(role, content, stats = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${role}`;
+      
+      let html = '';
+      if (role !== 'system-error') {
+        html += `<div class="message-meta">${role}</div>`;
+      }
+      
+      html += `<div>${content.replace(/\\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+      
+      if (stats) {
+        html += `
+          <div class="gateway-stats">
+            Served by: ${stats.servedBy} <br>
+            Cost: $${stats.costUsd} (${stats.usageSource}) <br>
+            Latency: ${stats.latencyMs}ms | Attempts: ${stats.attempts}
+          </div>
+        `;
+      }
+      
+      msgDiv.innerHTML = html;
+      elements.chatContainer.appendChild(msgDiv);
+      elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight;
+      return msgDiv;
+    }
+
+    function appendLoader() {
+      const loaderDiv = document.createElement('div');
+      loaderDiv.className = 'message assistant';
+      loaderDiv.id = 'typing-indicator';
+      loaderDiv.innerHTML = `
+        <div class="message-meta">Assistant</div>
+        <div><span class="typing"></span><span class="typing"></span><span class="typing"></span></div>
+      `;
+      elements.chatContainer.appendChild(loaderDiv);
+      elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight;
+    }
+
+    function removeLoader() {
+      const loader = document.getElementById('typing-indicator');
+      if (loader) loader.remove();
+    }
+
+    function clearChat() {
+      conversationHistory = [];
+      elements.chatContainer.innerHTML = '';
+    }
+
+    elements.chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const text = elements.chatInput.value.trim();
+      const key = elements.apiKey.value.trim();
+      const model = elements.modelSelect.value;
+      
+      if (!text) return;
+      if (!key) {
+        alert("Please enter a Client API Key");
+        return;
+      }
+      if (!model) {
+        alert("Please wait for models to load and select one");
+        return;
+      }
+
+      // Add user msg
+      appendMessage('user', text);
+      conversationHistory.push({ role: 'user', content: text });
+      elements.chatInput.value = '';
+      
+      // Build request messages
+      let messagesToSend = [...conversationHistory];
+      const sysPrompt = elements.systemPrompt.value.trim();
+      if (sysPrompt) {
+        messagesToSend.unshift({ role: 'system', content: sysPrompt });
+      }
+
+      elements.sendBtn.disabled = true;
+      elements.chatInput.disabled = true;
+      appendLoader();
+
+      try {
+        const res = await fetch('/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: messagesToSend,
+            max_tokens: parseInt(elements.maxTokens.value) || 512,
+            stream: false
+          })
+        });
+
+        removeLoader();
+        const data = await res.json();
+        
+        if (!res.ok) {
+          const errorMsg = data.error?.message || `HTTP Error ${res.status}`;
+          appendMessage('system-error', `Gateway Error: ${errorMsg}`);
+          // Remove the user message from history so they can try again if they want
+          conversationHistory.pop();
+        } else {
+          const assistantReply = data.choices[0].message.content;
+          const gwStats = data.x_gateway;
+          
+          let stats = null;
+          if (gwStats) {
+            // sum latencies
+            const totalLatency = gwStats.attempts.reduce((a, b) => a + b.latency_ms, 0);
+            stats = {
+              servedBy: gwStats.served_by,
+              costUsd: gwStats.cost_usd,
+              usageSource: gwStats.usage_source,
+              latencyMs: totalLatency,
+              attempts: gwStats.attempts.length
+            };
+          }
+          
+          appendMessage('assistant', assistantReply, stats);
+          conversationHistory.push({ role: 'assistant', content: assistantReply });
+        }
+        
+      } catch (err) {
+        removeLoader();
+        appendMessage('system-error', `Network Error: ${err.message}`);
+        conversationHistory.pop();
+      } finally {
+        elements.sendBtn.disabled = false;
+        elements.chatInput.disabled = false;
+        elements.chatInput.focus();
+      }
+    });
+
+    initGateway();
+
+  </script>
+</body>
+</html>

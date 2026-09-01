@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { costNanos, type ProviderTarget } from './pricing.js';
 import { GroqProvider } from './providers/groq.js';
+import { OpenRouterProvider } from './providers/openrouter.js';
 import {
   isFailoverable,
   isRetryableSameProvider,
@@ -14,6 +15,7 @@ import type { UsageEventInput } from './budget.js';
 
 const PROVIDERS: Record<string, Provider> = {
   groq: new GroqProvider(),
+  openrouter: new OpenRouterProvider(),
 };
 
 const MAX_ATTEMPTS_PER_PROVIDER = 2;

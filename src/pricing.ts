@@ -1,5 +1,5 @@
 
-export type ProviderId = 'groq' | 'mock';
+export type ProviderId = 'groq' | 'mock' | 'openrouter';
 
 export interface ProviderTarget {
   provider: ProviderId;
@@ -13,8 +13,22 @@ interface Price {
 
 const PRICES: Record<string, Price> = {
   'groq:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
+  'openrouter:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
   'groq:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
-  'mock:mock-echo': { usdPer1MInput: 0, usdPer1MOutput: 0 }
+  'openrouter:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
+  'mock:mock-echo': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:dots-studio/dots-3-note-preview:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:liquid/lfm-2.5-2.6b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:nvidia/nemotron-3.5-lightning:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:cohere/north-mini-code:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:nvidia/nemotron-3.5-content-safety:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:google/lyria-3-pro-preview': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:google/lyria-3-clip-preview': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:minimax/minimax-m2.7:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:nvidia/nemotron-3-super-120b-a12b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:openrouter/free': { usdPer1MInput: 0, usdPer1MOutput: 0 }
 };
 
 
@@ -56,15 +70,30 @@ export function isPriced(target: ProviderTarget): boolean {
 export const MODEL_ROUTES: Record<string, ProviderTarget[]> = {
   'gpt-oss-20b': [
     { provider: 'groq', model: 'openai/gpt-oss-20b' },
+    { provider: 'openrouter', model: 'openai/gpt-oss-20b' },
     { provider: 'mock', model: 'mock-echo' },
   ],
   'gpt-oss-120b': [
     { provider: 'groq', model: 'openai/gpt-oss-120b' },
+    { provider: 'openrouter', model: 'openai/gpt-oss-120b' },
     { provider: 'groq', model: 'openai/gpt-oss-20b' },
+    { provider: 'openrouter', model: 'openai/gpt-oss-20b' },
     { provider: 'mock', model: 'mock-echo' },
   ],
 
   'mock-echo': [{ provider: 'mock', model: 'mock-echo' }],
+  'ling-3.0-flash-fin': [{ provider: 'openrouter', model: 'inclusionai/ling-3.0-flash-fin:free' }],
+  'dots-3-note-preview': [{ provider: 'openrouter', model: 'dots-studio/dots-3-note-preview:free' }],
+  'lfm-2.5-2.6b': [{ provider: 'openrouter', model: 'liquid/lfm-2.5-2.6b:free' }],
+  'nemotron-3.5-lightning': [{ provider: 'openrouter', model: 'nvidia/nemotron-3.5-lightning:free' }],
+  'north-mini-code': [{ provider: 'openrouter', model: 'cohere/north-mini-code:free' }],
+  'nemotron-3.5-content-safety': [{ provider: 'openrouter', model: 'nvidia/nemotron-3.5-content-safety:free' }],
+  'nemotron-3-nano-omni-30b-a3b-reasoning': [{ provider: 'openrouter', model: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free' }],
+  'lyria-3-pro-preview': [{ provider: 'openrouter', model: 'google/lyria-3-pro-preview' }],
+  'lyria-3-clip-preview': [{ provider: 'openrouter', model: 'google/lyria-3-clip-preview' }],
+  'minimax-m2.7': [{ provider: 'openrouter', model: 'minimax/minimax-m2.7:free' }],
+  'nemotron-3-super-120b-a12b': [{ provider: 'openrouter', model: 'nvidia/nemotron-3-super-120b-a12b:free' }],
+  'free': [{ provider: 'openrouter', model: 'openrouter/free' }]
 };
 
 export function resolveRoute(model: string): ProviderTarget[] | null {
