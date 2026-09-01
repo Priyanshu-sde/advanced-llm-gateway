@@ -5,6 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "tsc && cp -r src/db/migrations dist/db/migrations",
+    "prestart": "pnpm run build",
+    "start": "node --env-file=.env dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,9 +15,13 @@
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/pg": "^8.23.1",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "fastify": "^5.12.1"
+    "fastify": "^5.12.1",
+    "gpt-tokenizer": "^4.0.0",
+    "pg": "^8.23.0"
   }
 }
