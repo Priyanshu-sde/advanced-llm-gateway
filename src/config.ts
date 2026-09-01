@@ -38,7 +38,7 @@ export const config = {
   openrouterBaseUrl: optional('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
   openrouterSiteUrl: process.env.OPENROUTER_SITE_URL?.trim() || null,
   openrouterSiteName: process.env.OPENROUTER_SITE_NAME?.trim() || null,
-  providerChain: optional('PROVIDER_CHAIN', 'groq,mock')
+  providerChain: optional('PROVIDER_CHAIN', 'groq,openrouter')
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean),

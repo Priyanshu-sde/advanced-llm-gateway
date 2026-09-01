@@ -50,7 +50,7 @@ async function handleChatCompletion(request: FastifyRequest, reply: FastifyReply
   }
 
   const { model, messages, maxTokens, temperature, topP, stop } = validation;
-  const chain = resolveRoute(model);
+  const chain = resolveRoute(model, messages);
 
   if (!chain?.length) {
     const supported = supportedModels().join(', ');

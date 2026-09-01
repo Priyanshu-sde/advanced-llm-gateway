@@ -17,7 +17,6 @@ app.get('/health', async () => ({
   provider_chain_configured: {
     groq: config.groqApiKey !== null,
     openrouter: config.openrouterApiKey !== null,
-    mock: true,
   },
   failure_injection_enabled: config.allowFailureInjection,
 }));

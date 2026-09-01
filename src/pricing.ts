@@ -1,5 +1,7 @@
+import { estimateInputTokens } from './tokens.js';
+import type { ChatMessage } from './providers/types.js';
 
-export type ProviderId = 'groq' | 'mock' | 'openrouter';
+export type ProviderId = 'groq' | 'openrouter';
 
 export interface ProviderTarget {
   provider: ProviderId;
@@ -16,7 +18,6 @@ const PRICES: Record<string, Price> = {
   'openrouter:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
   'groq:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 10 },
   'openrouter:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
-  'mock:mock-echo': { usdPer1MInput: 0, usdPer1MOutput: 0 },
   'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 0, usdPer1MOutput: 10 },
   'openrouter:dots-studio/dots-3-note-preview:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
   'openrouter:liquid/lfm-2.5-2.6b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
@@ -68,20 +69,17 @@ export function isPriced(target: ProviderTarget): boolean {
 }
 
 export const MODEL_ROUTES: Record<string, ProviderTarget[]> = {
+  'auto': [],
   'gpt-oss-20b': [
     { provider: 'groq', model: 'openai/gpt-oss-20b' },
-    { provider: 'openrouter', model: 'openai/gpt-oss-20b' },
-    { provider: 'mock', model: 'mock-echo' },
+    { provider: 'openrouter', model: 'openai/gpt-oss-20b' }
   ],
   'gpt-oss-120b': [
     { provider: 'groq', model: 'openai/gpt-oss-120b' },
     { provider: 'openrouter', model: 'openai/gpt-oss-120b' },
     { provider: 'groq', model: 'openai/gpt-oss-20b' },
-    { provider: 'openrouter', model: 'openai/gpt-oss-20b' },
-    { provider: 'mock', model: 'mock-echo' },
+    { provider: 'openrouter', model: 'openai/gpt-oss-20b' }
   ],
-
-  'mock-echo': [{ provider: 'mock', model: 'mock-echo' }],
   'ling-3.0-flash-fin': [{ provider: 'openrouter', model: 'inclusionai/ling-3.0-flash-fin:free' }],
   'dots-3-note-preview': [{ provider: 'openrouter', model: 'dots-studio/dots-3-note-preview:free' }],
   'lfm-2.5-2.6b': [{ provider: 'openrouter', model: 'liquid/lfm-2.5-2.6b:free' }],
@@ -96,7 +94,13 @@ export const MODEL_ROUTES: Record<string, ProviderTarget[]> = {
   'free': [{ provider: 'openrouter', model: 'openrouter/free' }]
 };
 
-export function resolveRoute(model: string): ProviderTarget[] | null {
+export function resolveRoute(model: string, messages?: ChatMessage[]): ProviderTarget[] | null {
+  if (model === 'auto') {
+    if (messages && estimateInputTokens(messages) > 1000) {
+      return MODEL_ROUTES['gpt-oss-120b'] ?? null;
+    }
+    return MODEL_ROUTES['gpt-oss-20b'] ?? null;
+  }
   return MODEL_ROUTES[model] ?? null;
 }
 
