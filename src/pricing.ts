@@ -14,10 +14,10 @@ interface Price {
 const PRICES: Record<string, Price> = {
   'groq:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
   'openrouter:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
-  'groq:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
+  'groq:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 10 },
   'openrouter:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
   'mock:mock-echo': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
+  'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 0, usdPer1MOutput: 10 },
   'openrouter:dots-studio/dots-3-note-preview:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
   'openrouter:liquid/lfm-2.5-2.6b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
   'openrouter:nvidia/nemotron-3.5-lightning:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
@@ -102,6 +102,22 @@ export function resolveRoute(model: string): ProviderTarget[] | null {
 
 export function supportedModels(): string[] {
   return Object.keys(MODEL_ROUTES);
+}
+
+export function getModelPricingInfo(): Record<string, { inputUsd: number, outputUsd: number }> {
+  const info: Record<string, { inputUsd: number, outputUsd: number }> = {};
+  for (const [model, chain] of Object.entries(MODEL_ROUTES)) {
+    if (chain.length > 0) {
+      const primary = chain[0];
+      if (primary) {
+        const price = PRICES[priceKey(primary)];
+        if (price) {
+          info[model] = { inputUsd: price.usdPer1MInput, outputUsd: price.usdPer1MOutput };
+        }
+      }
+    }
+  }
+  return info;
 }
 
 export function nanosToUsdString(nanos: bigint): string {

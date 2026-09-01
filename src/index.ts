@@ -6,13 +6,14 @@ import { migrate } from './db/migrate.js';
 import { pool } from './db/pool.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerChatRoutes } from './routes/chat.js';
-import { supportedModels } from './pricing.js';
+import { supportedModels, getModelPricingInfo } from './pricing.js';
 
 const app = Fastify();
 
 app.get('/health', async () => ({
   status: 'ok',
   models: supportedModels(),
+  model_pricing: getModelPricingInfo(),
   provider_chain_configured: {
     groq: config.groqApiKey !== null,
     openrouter: config.openrouterApiKey !== null,

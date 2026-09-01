@@ -379,7 +379,15 @@
           data.models.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m;
-            opt.textContent = m;
+            let priceText = '';
+            if (data.model_pricing && data.model_pricing[m]) {
+              const p = data.model_pricing[m];
+              // Format to show 2 decimal places if non-zero, or just $0
+              const inUsd = p.inputUsd === 0 ? '0' : p.inputUsd;
+              const outUsd = p.outputUsd === 0 ? '0' : p.outputUsd;
+              priceText = ` ($${inUsd} in / $${outUsd} out per 1M)`;
+            }
+            opt.textContent = m + priceText;
             elements.modelSelect.appendChild(opt);
           });
           
