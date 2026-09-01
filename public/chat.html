@@ -283,9 +283,12 @@
       <h1 style="font-size: 24px; font-weight: 700;">Chat Test UI</h1>
       <p style="color: var(--text-muted); font-size: 13px;">Test your Gateway API directly</p>
     </div>
-    <div class="status-indicator">
-      <div class="status-dot" id="api-status"></div>
-      <span id="api-status-text">Checking Gateway...</span>
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <a href="/admin.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-muted)'">Dashboard</a>
+      <div class="status-indicator">
+        <div class="status-dot" id="api-status"></div>
+        <span id="api-status-text">Checking Gateway...</span>
+      </div>
     </div>
   </header>
 
