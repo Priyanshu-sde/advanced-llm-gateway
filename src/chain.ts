@@ -18,7 +18,7 @@ const PROVIDERS: Record<string, Provider> = {
   openrouter: new OpenRouterProvider(),
 };
 
-const MAX_ATTEMPTS_PER_PROVIDER = 2;
+const MAX_ATTEMPTS_PER_PROVIDER = 8;
 const BACKOFF_BASE_MS = 250;
 
 const MAX_RETRY_AFTER_MS = 2_000;

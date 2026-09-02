@@ -14,22 +14,22 @@ interface Price {
 }
 
 const PRICES: Record<string, Price> = {
-  'groq:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
-  'openrouter:openai/gpt-oss-20b': { usdPer1MInput: 0.075, usdPer1MOutput: 0.3 },
-  'groq:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 10 },
-  'openrouter:openai/gpt-oss-120b': { usdPer1MInput: 0.15, usdPer1MOutput: 0.6 },
-  'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 0, usdPer1MOutput: 10 },
-  'openrouter:dots-studio/dots-3-note-preview:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:liquid/lfm-2.5-2.6b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:nvidia/nemotron-3.5-lightning:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:cohere/north-mini-code:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:nvidia/nemotron-3.5-content-safety:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:google/lyria-3-pro-preview': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:google/lyria-3-clip-preview': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:minimax/minimax-m2.7:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:nvidia/nemotron-3-super-120b-a12b:free': { usdPer1MInput: 0, usdPer1MOutput: 0 },
-  'openrouter:openrouter/free': { usdPer1MInput: 0, usdPer1MOutput: 0 }
+  'groq:openai/gpt-oss-20b': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:openai/gpt-oss-20b': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'groq:openai/gpt-oss-120b': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:openai/gpt-oss-120b': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:inclusionai/ling-3.0-flash-fin:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:dots-studio/dots-3-note-preview:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:liquid/lfm-2.5-2.6b:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:nvidia/nemotron-3.5-lightning:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:cohere/north-mini-code:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:nvidia/nemotron-3.5-content-safety:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:google/lyria-3-pro-preview': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:google/lyria-3-clip-preview': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:minimax/minimax-m2.7:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:nvidia/nemotron-3-super-120b-a12b:free': { usdPer1MInput: 10, usdPer1MOutput: 10 },
+  'openrouter:openrouter/free': { usdPer1MInput: 10, usdPer1MOutput: 10 }
 };
 
 
