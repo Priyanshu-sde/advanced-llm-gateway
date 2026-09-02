@@ -1,37 +1,27 @@
 # AI Log
 
-This document details the step-by-step process of how Artificial Intelligence tools and agents were utilized to build, debug, and deploy this project.
+This document details how Artificial Intelligence tools and agents were utilized to build, debug, and deploy this project.
 
-## 1. Initial Planning & Architecture
-* **Tool Used:** Claude Sonnet
-* **Process:** Copy-pasted the initial project requirements and goals into Claude Sonnet to gauge the overall complexity of the project and gather insights on industry best practices for the architecture.
+## Which AI tools/models you used, and for what
+* **Claude Sonnet:** Used for initial planning, architecture design, and generating comprehensive prompts to gauge project complexity.
+* **Claude Opus:** Used via OpenCode terminal for the initial core code generation based on the prompts.
+* **Antigravity IDE (Gemini Models):** Used extensively for code review, refactoring over-engineered code, debugging error logs, frontend development, feature iteration, and documentation generation.
+* **AI (General):** Assisted with refining the Nginx configuration file for deployment and generating `curl` commands to thoroughly test the deployed API routes.
 
-## 2. Core Code Generation
-* **Tools Used:** Claude Opus (via OpenCode terminal)
-* **Process:** After initializing the project manually, a comprehensive prompt was generated using Sonnet to build the core functionality. This prompt was then executed in the OpenCode terminal using the Opus model to generate the foundational codebase.
+## One place the AI was wrong or misleading, and how you caught it
+* AI suggested to deploy on render and it take 5 min cold start time but I went for VM approach and installed nginx and pm2 manually. AI suggested that sematic caching is easy but it was not.
+* **How it was caught:** I concluded that it would be better to have a custom setup to avoid cold start times and have more control over the application.
 
-## 3. Code Review & Refactoring
-* **Tool Used:** Antigravity IDE
-* **Process:** Opened the generated code in the Antigravity IDE. Conducted a manual review to remove unnecessary, over-engineered code, simplifying the logic for better maintainability.
+## One place you overrode the AI's suggestion, and why
+* **Scenario:** During feature iteration, the AI and I discussed implementing Semantic Caching to reduce costs and latency.
+* **Why it was overridden:** After analyzing the trade-offs (increased architectural complexity, higher latency on cache misses, and additional operational costs), I decided to override the suggestion, discard the caching idea, and focus strictly on request routing. 
 
-## 4. Debugging & Issue Resolution
-* **Tool Used:** Antigravity AI Agent
-* **Process:** During initial test runs, the application crashed multiple times. The error logs were pasted into the Antigravity agent chat for debugging. Several architectural and coding decisions made by Claude were questioned, and the Antigravity agent was used to verify whether those decisions adhered to best practices.
+## How you stayed in control of code you didn't type by hand
+* First I reviewed all the code myself. I used the Antigravity IDE to question the AI's architectural decisions, stripped out unnecessary over-engineered logic to keep the codebase maintainable, and manually tested the core flows using `curl` to ensure the outputs were exactly as expected. 
 
-## 5. Deployment & Configuration
-* **Tools Used:** AI for Nginx & `curl` commands
-* **Process:** Deployed the code on a Virtual Machine. Most of the deployment process was handled manually based on prior knowledge, but AI was leveraged to assist with refining the Nginx configuration file. Additionally, AI was used to generate `curl` commands to thoroughly test the deployed API routes.
+* **Secrets & Provider Calls:** I manually reviewed the implementation in `src/routes/chat.ts` and `src/chain.ts` to ensure that API keys and provider logic (like OpenRouter integrations) were handled securely, strictly validated in the headers, and not hardcoded.
+* **Budget Logic:** For the critical `reserve` and `settle` financial logic, I walked through the code line by line to verify the arithmetic and database transactions matched my exact specifications. The budget enforcement required bounding a request's cost before forwarding it, which I explicitly enforced.
 
-## 6. Frontend Development
-* **Tool Used:** Antigravity AI Agent
-* **Process:** Prompted the Antigravity agent to build out the frontend application utilizing plain HTML, CSS, and Vanilla JavaScript.
-
-## 7. Feature Iteration & Routing
-* **Tool Used:** Antigravity AI Agent
-* **Process:** Discussed the potential implementation of Semantic Caching with the AI. After analyzing the trade-offs (increased complexity, higher latency, and additional costs), the decision was made to discard the caching idea. Instead, the focus shifted to implementing request routing using Antigravity.
-
-## 8. Documentation
-* **Tool Used:** Antigravity AI Agent
-* **Process:** Authored the `DECISIONS.md` document manually and then used AI to enhance, format, and refine the explanations of the architectural decisions made throughout the project lifecycle. 
-
-After these steps, the finalized codebase and documentation were pushed to the repository.
+## Something you had to learn from scratch this weekend, and how you got up to speed
+* **Topic:** Althogh I have used open ai compactable api before but going into the depth of it and implemting it myselft was a new experience.
+* **How I got up to speed:** Every thing i asked from AI.
