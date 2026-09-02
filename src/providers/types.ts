@@ -31,6 +31,7 @@ export type ErrorClass =
   | 'bad_request'      // 400/422 -- our or the caller's fault, deterministic
   | 'auth'             // 401/403 -- OUR credential is wrong
   | 'not_found'        // 404 -- model does not exist upstream
+  | 'too_large'        // 413 -- request too large or TPM limit exceeded
   | 'content_policy'   // upstream refused on policy grounds
   | 'not_configured'   // adapter has no credential; skip it
   | 'unknown';
@@ -61,7 +62,9 @@ export function isFailoverable(c: ErrorClass): boolean {
     c === 'network' ||
     c === 'rate_limit' ||
     c === 'upstream_5xx' ||
-    c === 'not_configured'
+    c === 'not_configured' ||
+    c === 'not_found' ||
+    c === 'too_large'
   );
 }
 

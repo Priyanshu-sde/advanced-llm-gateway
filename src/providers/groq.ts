@@ -91,8 +91,10 @@ function classifyStatus(status: number, body: string): ErrorClass {
   if (status === 429) return 'rate_limit';
   if (status === 401 || status === 403) return 'auth';
   if (status === 404) return 'not_found';
+  if (status === 413) return 'too_large';
   if (status >= 500) return 'upstream_5xx';
   if (status === 400 || status === 422) {
+    if (/tokens? per minute|tpm|too large|limit/i.test(body)) return 'too_large';
     return /content[_ ]policy|moderation|flagged/i.test(body) ? 'content_policy' : 'bad_request';
   }
   return 'unknown';
