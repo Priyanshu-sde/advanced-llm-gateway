@@ -383,7 +383,9 @@
             const opt = document.createElement('option');
             opt.value = m;
             let priceText = '';
-            if (data.model_pricing && data.model_pricing[m]) {
+            if (m === 'auto') {
+              priceText = ' (Smart Context Routing)';
+            } else if (data.model_pricing && data.model_pricing[m]) {
               const p = data.model_pricing[m];
               // Format to show 2 decimal places if non-zero, or just $0
               const inUsd = p.inputUsd === 0 ? '0' : p.inputUsd;
